@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espaço ESP/MA — Aplicativo Oficial para Android</title>
+  <meta name="description" content="Baixe o aplicativo oficial da Escola de Saúde Pública do Maranhão (ESP/MA) para Android. Realize reservas de salas, consulte eventos e acompanhe solicitações.">
+  <meta name="theme-color" content="#0e2042">
+  
+  <!-- Open Graph / Redes Sociais -->
+  <meta property="og:title" content="Espaço ESP/MA — Aplicativo Oficial Android">
+  <meta property="og:description" content="Acesso institucional para reserva de espaços e consulta de eventos da Escola de Saúde Pública do Maranhão.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/preview.jpg">
+
+  <!-- Tipografia Moderna Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Paleta Institucional e Acentos */
+      --navy-950: #081326;
+      --navy-900: #0e2042;
+      --navy-800: #162e5c;
+      --primary: #1a4da1;
+      --primary-hover: #143d83;
+      --cyan-500: #0284c7;
+      --cyan-400: #38bdf8;
+      --cyan-50: #f0f9ff;
+      --emerald-600: #059669;
+      --emerald-50: #ecfdf5;
+
+      /* Paleta Espaço ESP/MA */
+      --spaces-sand: #f9dbaa;
+      --spaces-gold: #e9b03d;
+      --spaces-amber: #f49516;
+      --spaces-orange: #ed6c17;
+      --spaces-bronze: #cc851d;
+      --spaces-clay: #c4a377;
+      
+      /* Neutros */
+      --slate-900: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --white: #ffffff;
+
+      /* Sombras Suaves e Elevações */
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+      --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 12px 24px -4px rgba(14, 32, 66, 0.08), 0 4px 10px -2px rgba(14, 32, 66, 0.04);
+      --shadow-xl: 0 24px 48px -8px rgba(14, 32, 66, 0.12), 0 8px 18px -4px rgba(14, 32, 66, 0.06);
+      --shadow-button: 0 10px 22px -4px rgba(26, 77, 161, 0.35);
+
+      /* Dimensões e Raios */
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --radius-full: 9999px;
+      --max-width: 1200px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--slate-800);
+      background-color: #f4f7fb;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: 
+        radial-gradient(ellipse 70% 45% at 50% -10%, rgba(56, 189, 248, 0.12), transparent 70%),
+        radial-gradient(circle 600px at 95% 40%, rgba(2, 132, 199, 0.06), transparent 70%),
+        radial-gradient(circle 500px at 5% 90%, rgba(26, 77, 161, 0.05), transparent 60%),
+        linear-gradient(180deg, #f8fafc 0%, #edf3f9 100%);
+      background-attachment: fixed;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Linha decorativa de topo com as cores oficiais */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #0284c7 0%, #1a4da1 45%, #e11d48 70%, #d97706 100%);
+      z-index: 1000;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Container Principal */
+    .app-container {
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 20px 24px 40px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* ==========================================================================
+       HEADER INSTITUCIONAL
+       ========================================================================== */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 14px 22px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-logo-img {
+      height: 42px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .brand-divider {
+      width: 1px;
+      height: 30px;
+      background-color: var(--slate-200);
+    }
+
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-info-title {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--navy-900);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .brand-info-subtitle {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--slate-500);
+      letter-spacing: 0.01em;
+    }
+
+    /* ==========================================================================
+       HERO PRINCIPAL (GRID)
+       ========================================================================== */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.22fr 0.98fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Título com Ícone */
+    .title-with-icon {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .title-app-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      box-shadow: 
+        0 10px 20px -4px rgba(26, 77, 161, 0.22),
+        0 0 0 1px rgba(2, 132, 199, 0.18);
+      flex-shrink: 0;
+      transition: transform 0.25s ease;
+    }
+
+    .title-app-icon:hover {
+      transform: scale(1.05) rotate(-2deg);
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 3.4vw, 2.85rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--navy-900);
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--cyan-500) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--slate-600);
+      max-width: 540px;
+    }
+
+    /* Recursos Rápidos */
+    .feature-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .feature-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feature-pill svg {
+      width: 15px;
+      height: 15px;
+      fill: var(--primary);
+    }
+
+    /* ==========================================================================
+       CARD PRINCIPAL DE DOWNLOAD
+       ========================================================================== */
+    .download-card {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--cyan-400));
+    }
+
+    /* Botão Primário */
+    .cta-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      background: linear-gradient(135deg, var(--primary) 0%, #153e85 100%);
+      color: var(--white);
+      padding: 16px 28px;
+      border-radius: var(--radius-md);
+      font-size: 1.05rem;
+      font-weight: 700;
+      box-shadow: var(--shadow-button);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px -4px rgba(26, 77, 161, 0.45);
+      background: linear-gradient(135deg, #1d54b0 0%, #174492 100%);
+    }
+
+    .cta-button:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 14px -2px rgba(26, 77, 161, 0.35);
+    }
+
+    .cta-button svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+      transition: transform 0.2s ease;
+    }
+
+    .cta-button:hover svg {
+      transform: translateY(2px);
+    }
+
+    /* Metadados do Arquivo */
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--slate-100);
+    }
+
+    .spec-item {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .spec-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--slate-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+    }
+
+    .spec-value {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--slate-800);
+    }
+
+    /* ==========================================================================
+       PASSOS DE INSTALAÇÃO (COM PALETA SPACES BAR)
+       ========================================================================== */
+    .steps-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .steps-header {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--slate-600);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .step-box {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all 0.22s ease;
+      position: relative;
+    }
+
+    .step-box:hover {
+      background: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px -4px rgba(237, 108, 23, 0.14);
+    }
+
+    /* Cores personalizadas por passo */
+    .step-box.step-download:hover {
+      border-color: var(--spaces-orange);
+    }
+    .step-box.step-open:hover {
+      border-color: var(--spaces-amber);
+    }
+    .step-box.step-install:hover {
+      border-color: var(--spaces-bronze);
+    }
+
+    .step-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      color: var(--white);
+      display: grid;
+      place-items: center;
+      font-size: 0.74rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .step-download .step-badge {
+      background: linear-gradient(135deg, var(--spaces-amber) 0%, var(--spaces-orange) 100%);
+    }
+
+    .step-open .step-badge {
+      background: linear-gradient(135deg, var(--spaces-gold) 0%, var(--spaces-amber) 100%);
+    }
+
+    .step-install .step-badge {
+      background: linear-gradient(135deg, var(--spaces-bronze) 0%, var(--spaces-clay) 100%);
+    }
+
+    .step-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .step-desc {
+      font-size: 0.73rem;
+      line-height: 1.35;
+      color: var(--slate-500);
+    }
+
+    /* Alerta de Segurança Android */
+    .security-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #fffbeb;
+      border: 1px solid rgba(233, 176, 61, 0.35);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      color: #78350f;
+    }
+
+    .security-notice svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--spaces-orange);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .security-notice strong {
+      color: #451a03;
+    }
+
+    /* ==========================================================================
+       SHOWCASE DO APLICATIVO (COLUNA DIREITA)
+       ========================================================================== */
+    .hero-right {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 10px 0;
+    }
+
+    /* Glow de Fundo */
+    .hero-right::before {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(2, 132, 199, 0.15) 0%, rgba(26, 77, 161, 0.08) 50%, transparent 70%);
+      filter: blur(40px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Mockup Realista do Celular */
+    .phone-mockup-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+
+    .phone-mockup {
+      width: 260px;
+      background: #111827;
+      border-radius: 42px;
+      padding: 10px;
+      box-shadow: 
+        0 25px 50px -12px rgba(15, 23, 42, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+        0 0 0 4px #1e293b;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .phone-mockup:hover {
+      transform: translateY(-4px);
+    }
+
+    /* Alto-falante e Câmera Frontal */
+    .phone-island {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 76px;
+      height: 18px;
+      background: #030712;
+      border-radius: 20px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .island-camera {
+      width: 7px;
+      height: 7px;
+      background: #1e293b;
+      border-radius: 50%;
+    }
+
+    .island-sensor {
+      width: 20px;
+      height: 3px;
+      background: #111827;
+      border-radius: 4px;
+    }
+
+    /* Tela com o Preview */
+    .phone-screen {
+      width: 100%;
+      border-radius: 34px;
+      overflow: hidden;
+      background: #ffffff;
+      aspect-ratio: 9 / 19.5;
+      display: block;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+    }
+
+    .phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    /* Badge Flutuante */
+    .floating-card-app {
+      position: absolute;
+      bottom: 24px;
+      right: -24px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: var(--shadow-lg);
+      z-index: 2;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .floating-card-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .floating-card-text strong {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--navy-900);
+      line-height: 1.2;
+    }
+
+    .floating-card-text span {
+      display: block;
+      font-size: 0.68rem;
+      color: var(--emerald-600);
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       RODAPÉ INSTITUCIONAL
+       ========================================================================== */
+    .site-footer {
+      margin-top: auto;
+      padding: 16px 24px;
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .footer-text {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .footer-text strong {
+      font-size: 0.82rem;
+      color: var(--navy-900);
+    }
+
+    .footer-text span {
+      font-size: 0.72rem;
+      color: var(--slate-500);
+    }
+
+    .footer-logos {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    /* ==========================================================================
+       RESPONSIVIDADE (TABLETS & SMARTPHONES)
+       ========================================================================== */
+    @media (max-width: 960px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .hero-right {
+        order: -1;
+        margin: 10px 0;
+      }
+
+      .phone-mockup {
+        width: 220px;
+      }
+
+      .floating-card-app {
+        right: -10px;
+        bottom: 10px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app-container {
+        padding: 12px 14px 28px;
+        gap: 20px;
+      }
+
+      .site-header {
+        padding: 14px;
+      }
+
+      .title-app-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+      }
+
+      .hero-title {
+        font-size: 1.85rem;
+      }
+
+      .download-card {
+        padding: 16px;
+        gap: 16px;
+      }
+
+      .specs-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+
+      .steps-container {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .step-box {
+        padding: 10px;
+      }
+
+      .site-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px;
+        gap: 14px;
+      }
+
+      .footer-logos {
+        width: 100%;
+        max-width: 240px;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- CABEÇALHO INSTITUCIONAL -->
+    <header class="site-header" role="banner">
+      <div class="brand-group">
+        <img class="brand-logo-img" src="assets/logo.png" alt="Logotipo da Escola de Saúde Pública do Maranhão">
+        <div class="brand-divider" aria-hidden="true"></div>
+        <div class="brand-info">
+          <span class="brand-info-title">Escola de Saúde Pública do Maranhão</span>
+          <span class="brand-info-subtitle">Secretaria de Estado da Saúde — Governo do Maranhão</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- HERO / CONTEÚDO PRINCIPAL -->
+    <main class="hero-grid" role="main">
+      
+      <!-- COLUNA DA ESQUERDA: AÇÃO E DOWNLOAD -->
+      <section class="hero-left" aria-labelledby="page-title">
+        
+        <!-- TÍTULO COM ÍCONE DO APP -->
+        <div class="title-with-icon">
+          <img class="title-app-icon" src="assets/ESP-Eventos_icone.png" alt="Ícone Espaço ESP/MA">
+          <h1 id="page-title" class="hero-title">
+            Espaço <span>ESP/MA</span>
+          </h1>
+        </div>
+
+        <p class="hero-description">
+          Gerencie reservas de salas, acompanhe a programação institucional de eventos e consulte informações com agilidade, transparência e segurança.
+        </p>
+
+        <div class="feature-pills" aria-label="Principais recursos">
+          <div class="feature-pill">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <span>Reserva de Salas</span>
+          </div>
+          <div class="feature-pill">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <span>Agenda de Eventos</span>
+          </div>
+          <div class="feature-pill">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <span>Acesso Seguro</span>
+          </div>
+        </div>
+
+        <!-- CARD PRINCIPAL DE DOWNLOAD -->
+        <div class="download-card">
+          
+          <a class="cta-button" href="https://github.com/cte-espma/espaco-espma-downloads/releases/download/v1.0.0/application-6379975c-32f9-498d-8f32-877ffd97e861.apk" download>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
+            </svg>
+            <span>Baixar Aplicativo Android</span>
+          </a>
+
+          <!-- METADADOS TÉCNICOS -->
+          <div class="specs-grid" aria-label="Informações do pacote">
+            <div class="spec-item">
+              <div class="spec-label">Versão</div>
+              <div class="spec-value">1.0.0</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-label">Tamanho</div>
+              <div class="spec-value">~103 MB</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-label">Sistema</div>
+              <div class="spec-value">Android 8.0+</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-label">Origem</div>
+              <div class="spec-value">ESP/MA Oficial</div>
+            </div>
+          </div>
+
+          <!-- GUIA DE INSTALAÇÃO (COM PALETA SPACES BAR) -->
+          <div class="steps-section">
+            <div class="steps-header">Como instalar no seu celular</div>
+            
+            <div class="steps-container">
+              <div class="step-box step-download">
+                <div class="step-top">
+                  <div class="step-badge">1</div>
+                  <div class="step-title">Baixar</div>
+                </div>
+                <div class="step-desc">Toque no botão acima para iniciar o download do arquivo <strong>.apk</strong>.</div>
+              </div>
+
+              <div class="step-box step-open">
+                <div class="step-top">
+                  <div class="step-badge">2</div>
+                  <div class="step-title">Abrir</div>
+                </div>
+                <div class="step-desc">Ao concluir, toque na notificação ou abra sua pasta <strong>Downloads</strong>.</div>
+              </div>
+
+              <div class="step-box step-install">
+                <div class="step-top">
+                  <div class="step-badge">3</div>
+                  <div class="step-title">Instalar</div>
+                </div>
+                <div class="step-desc">Se o Android solicitar, autorize a instalação desta fonte para finalizar.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AVISO DE SEGURANÇA ANDROID -->
+          <div class="security-notice">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+            <div>
+              <strong>Aviso padrão do Android:</strong> Caso seu navegador exiba o alerta de segurança <em>"O arquivo pode ser nocivo"</em>, toque em <strong>"Fazer o download mesmo assim"</strong>. Este é o canal de distribuição oficial da ESP/MA.
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- COLUNA DA DIREITA: SHOWCASE DO APLICATIVO -->
+      <aside class="hero-right" aria-label="Visualização do aplicativo">
+        
+        <div class="phone-mockup-wrapper">
+          
+          <!-- Moldura do Smartphone -->
+          <div class="phone-mockup">
+            <div class="phone-island">
+              <div class="island-camera"></div>
+              <div class="island-sensor"></div>
+            </div>
+
+            <div class="phone-screen">
+              <img src="assets/preview.jpg" alt="Interface real do aplicativo Espaço ESP/MA mostrando painel de controle e reservas">
+            </div>
+          </div>
+
+          <!-- Card Flutuante com Ícone do App -->
+          <div class="floating-card-app">
+            <img class="floating-card-icon" src="assets/ESP-Eventos_icone.png" alt="Ícone Espaço ESP/MA">
+            <div class="floating-card-text">
+              <strong>Espaço ESP/MA</strong>
+              <span>Pronto para instalar</span>
+            </div>
+          </div>
+
+        </div>
+
+      </aside>
+
+    </main>
+
+    <!-- RODAPÉ INSTITUCIONAL -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="footer-text">
+        <strong>Escola de Saúde Pública do Maranhão — ESP/MA</strong>
+        <span>Portal oficial de distribuição de aplicativos institucionais da Secretaria de Estado da Saúde.</span>
+      </div>
+
+      <img class="footer-logos" src="assets/rodape.png" alt="Logotipos do Governo do Maranhão, Secretaria de Estado da Saúde e Escola de Saúde Pública do Maranhão">
+    </footer>
+
+  </div>
+
+</body>
+</html>
